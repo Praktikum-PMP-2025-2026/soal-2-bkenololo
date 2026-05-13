@@ -3,174 +3,120 @@
 *   Hari dan Tanggal    : Rabu, 13 Mei 2026
 *   Nama (NIM)          : Benedictus Kenneth Setiadi (13224003)
 *   Nama File           : soal2.c
-*   Deskripsi           :
+*   Deskripsi           : Menghitung jumlah pulau dan luas pulau terbesar secara dinamis
 */
 
 #include <stdio.h> 
+#include <stdlib.h> 
 #include <string.h> 
 #include <stdbool.h> 
 
-#define ROW 5
-#define COL 5
-
-int isSafe(int M[][COL], int row, int col, bool visited[][COL], int rowt, int colt) 
+// checks if the current cell is within bounds, is a land cell (1), and hasn't been visited
+int isSafe(int **M, int row, int col, bool **visited, int rowt, int colt) 
 { 
-    // row number is in range, column number is in range and value is 1 
-    // and not yet visited 
     return (row >= 0) && (row < rowt) &&     
-        (col >= 0) && (col < colt) &&     
-        (M[row][col] && !visited[row][col]); 
+           (col >= 0) && (col < colt) &&     
+           (M[row][col] && !visited[row][col]); 
 } 
 
-
-void DFS(int M[][COL], int row, int col, bool visited[][COL], int *area, int rowt, int colt) 
+// Depth First Search to traverse the entire connected island
+void DFS(int **M, int row, int col, bool **visited, int *area, int rowt, int colt) 
 { 
-    // These arrays are used to get row and column numbers of 8 neighbours 
-    // of a given cell 
+    // Arrays to explore 4-directional connected neighbors (up, right, left, down)
     static int rowNbr[] = {-1, 0, 0, 1}; 
     static int colNbr[] = {0, 1, -1, 0}; 
-    // int curr_largest = 0;
 
-    // increment area by 1
     (*area)++;
-
-    // Mark this cell as visited 
     visited[row][col] = true; 
 
-    // Recur for all connected neighbours 
-    for (int k = 0; k < 4; ++k) 
-        if (isSafe(M, row + rowNbr[k], col + colNbr[k], visited, rowt, colt) ){
-            // curr_largest += 1;
+    for (int k = 0; k < 4; ++k) {
+        if (isSafe(M, row + rowNbr[k], col + colNbr[k], visited, rowt, colt)) {
             DFS(M, row + rowNbr[k], col + colNbr[k], visited, area, rowt, colt); 
         }
-    // largest = &curr_largest; 
+    }
 } 
 
-// int largest(int a, int b){
-//     if(a>b){
-//         return a;
-//     } if(a<b){
-//         return b;
-//     } else {
-//         return a;
-//     }
-// }
-
-int countIslands(int M[][COL], int rowt, int colt) 
+// Counts total isolated islands
+int countIslands(int **M, int rowt, int colt) 
 { 
-    // Make a bool array to mark visited cells. 
-    // Initially all cells are unvisited 
-    bool visited[rowt][colt]; 
-    memset(visited, 0, sizeof(visited)); 
+    // Dynamically allocate the 2D boolean tracking array
+    bool **visited = (bool **)malloc(rowt * sizeof(bool *));
+    for (int i = 0; i < rowt; i++) {
+        visited[i] = (bool *)calloc(colt, sizeof(bool)); // calloc initializes elements to false
+    }
 
-    // Initialize count as 0 and traverse through the all cells of 
-    // given matrix 
     int count = 0; 
-    // int *largest = 0;
-    int area = 0;
-    for (int i = 0; i < rowt; ++i) 
-        for (int j = 0; j < colt; ++j) 
-            if (M[i][j] && !visited[i][j]) // If a cell with value 1 is not 
-            {                         // visited yet, then new island found 
-                DFS(M, i, j, visited, &area, rowt, colt);     // Visit all cells in this island. 
-                ++count;                 // and increment island count 
+    for (int i = 0; i < rowt; ++i) {
+        for (int j = 0; j < colt; ++j) {
+            if (M[i][j] && !visited[i][j]) {
+                int area = 0; // Temp dummy variable just to track traversal structure
+                DFS(M, i, j, visited, &area, rowt, colt);     
+                ++count;                 
             } 
+        }
+    }
+
+    // Free the allocated memory for visited matrix
+    for (int i = 0; i < rowt; i++) free(visited[i]);
+    free(visited);
 
     return count; 
 } 
 
-// Function to find area of the largest region of 1s
-int largestRegion(int M[][COL], int rowt, int colt) {
-  	
-    // Initialize result as 0 and traverse through 
-  	// all cells of given matrix
-    bool visited[rowt][colt]; 
+// Finds area of the largest region of 1s
+int largestRegion(int **M, int rowt, int colt) {
+    bool **visited = (bool **)malloc(rowt * sizeof(bool *));
+    for (int i = 0; i < rowt; i++) {
+        visited[i] = (bool *)calloc(colt, sizeof(bool));
+    }
+
     int maxArea = 0;
     for (int i = 0; i < rowt; i++) {
         for (int j = 0; j < colt; j++) {
-            // If a cell with value 1 is found
-            if (M[i][j] == 1) {
+            if (M[i][j] == 1 && !visited[i][j]) {
                 int area = 0;
                 DFS(M, i, j, visited, &area, rowt, colt);
 
-                // Maximize the area
                 if (area > maxArea) {
                     maxArea = area;
                 }
             }
         }
     }
+
+    for (int i = 0; i < rowt; i++) free(visited[i]);
+    free(visited);
+
     return maxArea;
 }
 
-
-// int largestIsland(int M[][COL]) 
-// { 
-//     // Make a bool array to mark visited cells. 
-//     // Initially all cells are unvisited 
-//     bool visited[ROW][COL]; 
-//     memset(visited, 0, sizeof(visited)); 
-
-//     // Initialize count as 0 and traverse through the all cells of 
-//     // given matrix 
-//     int count = 0; 
-//     int *largest = 0;
-//     for (int i = 0; i < ROW; ++i) 
-//         for (int j = 0; j < COL; ++j) 
-//             if (M[i][j] && !visited[i][j]) // If a cell with value 1 is not 
-//             {                         // visited yet, then new island found 
-//                 DFS(M, i, j, visited, largest);     // Visit all cells in this island. 
-//                 ++count;                 // and increment island count 
-//             } 
-
-//     int curr_largest = *largest;
-//     return curr_largest; 
-// } 
-
-    
-
 int main(){
     int R, C;
-    scanf("%d %d", &R, &C);
-    // printf("%d %d\n", R, C);
-    // int M[R][C] = { {1,1,0,0,0}, 
-    //     {1,1,0,1,0}, 
-    //     {0,0,1,0,1}, 
-    //     {0,0,0,1,1} };; 
+    if (scanf("%d %d", &R, &C) != 2) return 1;
 
-    // for(int i = 0; i < C)
+    // Dynamically allocate 2D array for Map Grid M[R][C]
+    int **M = (int **)malloc(R * sizeof(int *));
+    for (int i = 0; i < R; i++) {
+        M[i] = (int *)malloc(C * sizeof(int));
+    }
 
-    // int rows = 3, cols = 3;
-    int M[R][C]; // Declaration
-    char str[C];
+    // Allocate buffer string with safety room for trailing newline/null characters
+    char *str = (char *)malloc((C + 2) * sizeof(char));
 
-    // int x;
     for (int i = 0; i < R; i++) {
         scanf("%s", str);
-        // printf("%c", str[0]);
         for (int j = 0; j < C; j++) {
-            int curr = str[j] - '0';
-            M[i][j] = curr;// Manual assignment
-            // printf("%d", M[i][j]);
+            M[i][j] = str[j] - '0';
         }
     } 
 
-    
-    // for(int i = 0; i < R; i++){
-    //     for (int j = 0; j < C; j++)
-    //     {
-            
-    //     }
-        
-    // }
-    
-
-    // int grid[4][5] = { {1,1,0,0,0}, {1,1,0,1,0}, {0,0,1,0,1}, {0,0,0,1,1} };
-
-
     printf("ISLANDS %d\n", countIslands(M, R, C)); 
-    printf("LARGEST %d", largestRegion(M,  R,  C));
+    printf("LARGEST %d\n", largestRegion(M, R, C));
+
+    // Clean up allocated heap blocks
+    free(str);
+    for (int i = 0; i < R; i++) free(M[i]);
+    free(M);
+
     return 0;
 }
-
-// 11000 11010 00101 00011
