@@ -10,8 +10,8 @@
 #include <string.h> 
 #include <stdbool.h> 
 
-#define ROW 5
-#define COL 5
+#define ROW 100
+#define COL 100
 
 int isSafe(int M[][COL], int row, int col, bool visited[][COL], int rowt, int colt) 
 { 
@@ -127,6 +127,7 @@ int largestRegion(int M[][COL], int rowt, int colt) {
 //     return curr_largest; 
 // } 
 
+    
 
 int main(){
     int R, C;
@@ -167,7 +168,7 @@ int main(){
     // int grid[4][5] = { {1,1,0,0,0}, {1,1,0,1,0}, {0,0,1,0,1}, {0,0,0,1,1} };
 
 
-    printf("\nISLANDS %d\n", countIslands(M, R, C)); 
+    printf("ISLANDS %d\n", countIslands(M, R, C)); 
     printf("LARGEST %d", largestRegion(M,  R,  C));
     return 0;
 }
