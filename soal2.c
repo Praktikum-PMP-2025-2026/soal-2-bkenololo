@@ -131,7 +131,7 @@ int largestRegion(int M[][COL], int rowt, int colt) {
 int main(){
     int R, C;
     scanf("%d %d", &R, &C);
-    printf("%d %d\n", R, C);
+    // printf("%d %d\n", R, C);
     // int M[R][C] = { {1,1,0,0,0}, 
     //     {1,1,0,1,0}, 
     //     {0,0,1,0,1}, 
@@ -141,11 +141,16 @@ int main(){
 
     // int rows = 3, cols = 3;
     int M[R][C]; // Declaration
-    int x;
+    char str[C];
+
+    // int x;
     for (int i = 0; i < R; i++) {
+        scanf("%s", str);
+        // printf("%c", str[0]);
         for (int j = 0; j < C; j++) {
-            scanf("%d", &x);
-            M[i][j] = x;// Manual assignment
+            int curr = str[j] - '0';
+            M[i][j] = curr;// Manual assignment
+            // printf("%d", M[i][j]);
         }
     } 
 
@@ -162,7 +167,7 @@ int main(){
     // int grid[4][5] = { {1,1,0,0,0}, {1,1,0,1,0}, {0,0,1,0,1}, {0,0,0,1,1} };
 
 
-    printf("ISLANDS %d\n", countIslands(M, R, C)); 
+    printf("\nISLANDS %d\n", countIslands(M, R, C)); 
     printf("LARGEST %d", largestRegion(M,  R,  C));
     return 0;
 }
