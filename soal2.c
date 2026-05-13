@@ -10,8 +10,8 @@
 #include <string.h> 
 #include <stdbool.h> 
 
-#define ROW 100
-#define COL 100
+#define ROW 5
+#define COL 5
 
 int isSafe(int M[][COL], int row, int col, bool visited[][COL], int rowt, int colt) 
 { 
